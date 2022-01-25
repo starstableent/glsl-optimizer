@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-message("yo")
-if(NOT DEFINED SKIP_EXECUTABLES)
-  message("hej")
-endif()
-return()
-
 include_directories(include)
 include_directories(src/mesa)
 include_directories(src/mapi)
