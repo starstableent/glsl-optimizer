@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 
+message("yo")
+if(NOT DEFINED SKIP_EXECUTABLES)
+  message("hej")
+endif()
+return()
+
 include_directories(include)
 include_directories(src/mesa)
 include_directories(src/mapi)
@@ -31,21 +37,24 @@ list(REMOVE_ITEM glsl_sources ${glsl_sources_remove})
 add_library(glsl_optimizer ${glsl_sources})
 target_link_libraries(glsl_optimizer glcpp-library mesa)
 
-add_executable(glsl_compiler src/glsl/main.cpp)
-target_link_libraries(glsl_compiler glsl_optimizer)
 
-file(GLOB glsl_test_sources tests/*.cpp)
-add_executable(glsl_test ${glsl_test_sources})
-target_link_libraries(glsl_test glsl_optimizer)
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    # OSX-specific build requirements
-    find_library(OpenGL_LIBRARY OpenGL )
-    target_link_libraries(glsl_test ${OpenGL_LIBRARY})
-endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(NOT DEFINED SKIP_EXECUTABLES)
+    add_executable(glsl_compiler src/glsl/main.cpp)
+    target_link_libraries(glsl_compiler glsl_optimizer)
 
-file(GLOB glslopt_sources contrib/glslopt/*.cpp)
-add_executable(glslopt ${glslopt_sources})
-target_link_libraries(glslopt glsl_optimizer)
+    file(GLOB glsl_test_sources tests/*.cpp)
+    add_executable(glsl_test ${glsl_test_sources})
+    target_link_libraries(glsl_test glsl_optimizer)
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        # OSX-specific build requirements
+        find_library(OpenGL_LIBRARY OpenGL )
+        target_link_libraries(glsl_test ${OpenGL_LIBRARY})
+    endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
-#add_executable(glcpp src/glsl/glcpp/glcpp.c)
-#target_link_libraries(glcpp glsl_optimizer)
+    file(GLOB glslopt_sources contrib/glslopt/*.cpp)
+    add_executable(glslopt ${glslopt_sources})
+    target_link_libraries(glslopt glsl_optimizer)
+
+    add_executable(glcpp src/glsl/glcpp/glcpp.c)
+    target_link_libraries(glcpp glsl_optimizer)
+endif()
